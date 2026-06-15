@@ -45,7 +45,7 @@ void setup() {
     delay(1000);
     spotifyPlayer.handle_Client();
   }
-  Serial.println("Connected to Spotify!");
+  Serial.println("Authenticated!");
 
 }
 

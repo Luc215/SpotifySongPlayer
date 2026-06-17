@@ -5,6 +5,7 @@
 #include <Wifi.h>
 #include <SpotifyEsp32.h>
 #include <SPI.h>
+#include "SpotifyLogo.h"
 
 #define TFT_CS 1
 #define TFT_RST 2
@@ -45,11 +46,15 @@ void setup() {
     delay(1000);
     spotifyPlayer.handle_Client();
   }
-  Serial.println("Authenticated!");
+  Serial.println("Authenticated Spotify Key!");
 
 }
 
 void loop() {
-  
+  tft.displayRGBBitmap(0,0, Spotify_logo_without_text_svg_2_[], 128, 128)
+  String currentArtist = spotifyPlayer.current_artist_names();
+  String currentTrack = spotifyPlayer.current_track_name();
+  }
+}
 
 }

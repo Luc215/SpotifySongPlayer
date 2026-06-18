@@ -54,7 +54,13 @@ void loop() {
   tft.displayRGBBitmap(0,0, Spotify_logo_without_text_svg_2_[], 128, 128)
   String currentArtist = spotifyPlayer.current_artist_names();
   String currentTrack = spotifyPlayer.current_track_name();
+  String spotifyPlayer.get_current_album_image_url();
+
   }
 }
+
+}
+
+void convertAlbumToCArray(String url){
 
 }

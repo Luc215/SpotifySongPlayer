@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <WiFi.h>
-#include <WiFiClientSecure.h>
 #include <TJpg_Decoder>
 #include <TFT_eSPI>
 #include <SpotifyEsp32.h>

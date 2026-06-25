@@ -1,66 +1,93 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7735.h>
-#include <Wifi.h>
+#include <WiFi.h>
+#include <WiFiClientSecure.h>
+#include <TJpg_Decoder>
+#include <TFT_eSPI>
 #include <SpotifyEsp32.h>
 #include <SPI.h>
 #include "SpotifyLogo.h"
+#include "songButtons.h"
 
-#define TFT_CS 1
-#define TFT_RST 2
-#define TFT_DC 3
-#define TFT_SCLK 4
-#define TFT_MOSI 5
+TFT_eSPI tft = TFT_eSPI();
 
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+String lastSongID = "";
+bool songPlaying = false;
 
-const char* SSID = "Insert_SSID_HERE";
-const char* PASSWORD = "INSERT_PASS_HERE"
-const char* CLIENT_ID = "INSERT_CLIENT_ID";
-const char* CLIENT_SECRET = "INSERT_CLIENT_SECRET"
+const char* SSID = "Insert_SSID_HERE"; // Insert SSID
+const char* PASSWORD = "INSERT_PASS_HERE"; // Insert Password
+const char* CLIENT_ID = "INSERT_CLIENT_ID"; // Insert Client ID from Spotify API
+const char* CLIENT_SECRET = "INSERT_CLIENT_SECRET"; // Insert Client Secret ID in Spotify API
+
+Spotify spotifyPlayer(CLIENT_ID, CLIENT_SECRET);
+
+int xPos = 0; //place holders. Want to actually startd drawing when I assemble the build
+int yPos = 0;
 
 void setup() {
-  Serial.begin(115200)
-
-  tft.initR(INITR_BLACKTAB);
+  Serial.begin(115200);
+  tft.begin();
+  tft.setTextColor(0xFFFF, 0x0000);
+  tft.fillScreen(TFT_BLACK);
   tft.setRotation(1);
   Serial.println("TFT Display Initialized!");
-  tft.fillScreen(ST77XX_BLACK);
 
-  Wifi.begin(SSID, PASSWORD);
+  TJpgDec.setJpgScale(1);
+
+  TJpgDec.setSwapBytes(true);
+
+  TJpgDec.setCallback(tftOutput);
+
+  WiFi.begin(SSID, PASSWORD);
   Serial.print("Attempting to connect to wifi...");
-  while(Wifi.status() != WL_CONNECTED){
+  while(WiFi.status() != WL_CONNECTED){
     delay(1000);
     Serial.print(".");
   }
   Serial.println("\nConnected To Wifi!\n");
 
-  tft.setCursor(0.0); // cursor to the top left
-  tft.write(Wifi.localIP().toString().c_str()); // print IP to screen
-
-  Spotify spotifyPlayer(CLIENT_ID, CLIENT_SECRET);
-
   spotifyPlayer.begin();
   while(!spotifyPlayer.is_auth()){
     delay(1000);
-    spotifyPlayer.handle_Client();
+    spotifyPlayer.handle_client();
   }
   Serial.println("Authenticated Spotify Key!");
+
+  tft.pushImage(0,0, Spotify_logo_without_text_svg_2_[], 50, 50);
+  tft.pushImage(20, 100, 10, 10, previousIcon[]);
+  tft.pushImage(140, 100, 10, 10, nextIcon[]);
 
 }
 
 void loop() {
-  tft.displayRGBBitmap(0,0, Spotify_logo_without_text_svg_2_[], 128, 128)
-  String currentArtist = spotifyPlayer.current_artist_names();
-  String currentTrack = spotifyPlayer.current_track_name();
-  String spotifyPlayer.get_current_album_image_url();
-
+  songPlaying = spotifyPlayer.is_playing();
+  if(songPlaying){
+    tft.pushImage(80, 100, 10, 10, pauseIcon[]);
   }
-}
+  else{
+    tft.pushImage(80, 100, 10, 10, playIcon[]);
+  }
+  String currentSongID = spotifyPlayer.current_track_id();
+  if (currentSongID.length() > 0 && currentSongID != lastSongID){
+    lastSongID = currentSongID;
+    String currentArtist = spotifyPlayer.current_artist_names();
+    String currentTrack = spotifyPlayer.current_track_name();
+    tft.drawString(currentTrack, xPos, yPos);
+    tft.drawString(currentArtist, xPos, yPos); // will draw properly when it is fully assembled
+
+    drawAlbumCover();
+  }
 
 }
 
-void convertAlbumToCArray(String url){
+bool tftOutput(int16_t x, int16_t y, uint16_t w, uint16_t h, uint16_t* bitmap){
+  if (y >= tft.height()) return 0;
 
+  tft.pushimage(x,y,w,h,bitmap);
+  return 1;
+}
+
+void drawAlbumCover(){
+  String currentAlbumCover = spotifyPlayer.get_current_album_image_url(2);
+  TJpgDec.drawJpg(x,y, currentAlbumCover); // x and y are placeholders for when I actually decide where to place album properly
 }

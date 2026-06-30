@@ -11,4 +11,4 @@ A device utilizing an ESP32, TFT Display, and the Spotify API to display, pause,
 * [TJpeg_Decoder](https://github.com/Bodmer/TJpg_Decoder)
 ### CAD Files:
 * [Case](https://a360.co/4wewQzS)
-* [Back Of the Case](https://a360.co/4wfnbsS)
+* [Back of the Case](https://a360.co/4wfnbsS)

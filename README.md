@@ -20,7 +20,8 @@ A device utilizing an ESP32, TFT Display, and the Spotify API to display, pause,
   #### CAD:
   <img width="1156" height="694" alt="image" src="https://github.com/user-attachments/assets/2c7389b5-8a58-421f-913d-def0cae46aef" />
   <img width="938" height="624" alt="image" src="https://github.com/user-attachments/assets/b49dbe96-b220-4810-8753-12cf673ae9e1" />
-  <img width="1217" height="564" alt="image" src="https://github.com/user-attachments/assets/5da4102d-0719-465a-a44b-94f174be5d04" />
+  <img width="814" height="554" alt="image" src="https://github.com/user-attachments/assets/1aefc301-29a1-4f06-81be-ef33ba17486a" />
+
 
 
 
